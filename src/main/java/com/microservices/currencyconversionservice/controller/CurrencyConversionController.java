@@ -2,6 +2,8 @@ package com.microservices.currencyconversionservice.controller;
 
 import com.microservices.currencyconversionservice.model.CurrencyConversion;
 import com.microservices.currencyconversionservice.service.FeignClientProxyToCallCurrentExchangeFromCurrentConversion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 @RestController
 public class CurrencyConversionController {
-
+    private Logger log= LoggerFactory.getLogger(CurrencyConversionController.class);
     private FeignClientProxyToCallCurrentExchangeFromCurrentConversion proxy;
 
     CurrencyConversionController(FeignClientProxyToCallCurrentExchangeFromCurrentConversion proxy){
@@ -26,7 +28,7 @@ public class CurrencyConversionController {
                                               @PathVariable BigDecimal quantity) {
 
        CurrencyConversion response = proxy.retrieveLimitsFromConfigurations(from,to);
-
+        log.info("{}",response);
         return new CurrencyConversion(response.getId(), from, to, response.getConversionMultiple(), quantity,
                 quantity.multiply(response.getConversionMultiple()), response.getPort());
     }
